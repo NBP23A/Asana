@@ -20,19 +20,54 @@ namespace Asana.Library.Services
                 {
                     instance = new ProjectServiceProxy();
                 }
-
                 return instance;
             }
         }
 
-        public List<Project> Projects { get; set; }
+        private List<Project> _projects;
+
+        public List<Project> Projects
+        {
+            get { return _projects.ToList(); } // returns a copy like ToDo
+            private set { _projects = value; }
+        }
 
         private ProjectServiceProxy()
         {
-            Projects = new List<Project>
+            _projects = new List<Project>
             {
-                new Project { Id = 1, Name = "Example Project", Description = "Demo project", CompletePercent = 0 }
+                new Project { Id = 1, Name = "Example Project", Description = "Demo", CompletePercent = 0 }
             };
+        }
+
+        public void AddOrUpdateProject(Project project)
+        {
+            if (project == null) return;
+
+            if (project.Id == 0)
+            {
+                project.Id = _projects.Any() ? _projects.Max(p => p.Id) + 1 : 1;
+                _projects.Add(project);
+            }
+            else
+            {
+                var existing = _projects.FirstOrDefault(p => p.Id == project.Id);
+                if (existing != null)
+                {
+                    existing.Name = project.Name;
+                    existing.Description = project.Description;
+                    existing.CompletePercent = project.CompletePercent;
+                }
+            }
+        }
+
+        public void DeleteProject(int id)
+        {
+            var project = _projects.FirstOrDefault(p => p.Id == id);
+            if (project != null)
+            {
+                _projects.Remove(project);
+            }
         }
     }
 }
