@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +10,20 @@ namespace Asana.Library.Models
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public string? Description { get; set; }
-        public double CompletePercent { get; set; }
 
-        public List<ToDo> ToDos { get; set; } = new List<ToDo>();
+        public string? Description { get; set; }
+        public int? CompletePercent { get; set; }
+
+        public List<ToDo> ToDos { get; set; }
+
+        public Project()
+        {
+            ToDos = new List<ToDo>();
+        }
 
         public override string ToString()
         {
-            return $"[{Id}] {Name} - {Description} ({CompletePercent}% Complete)";
+            return $"[{Id}] {Name} - {CompletePercent}% Complete";
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +8,22 @@ namespace Asana.Library.Models
 {
     public class ToDo
     {
-        public int Id { get; set; }
+        public ToDo()
+        {
+            Id = 0;
+            IsCompleted = false;
+        }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public int? Priority { get; set; }
         public bool? IsCompleted { get; set; }
-        public int ProjectId { get; set; }
 
+        
+
+        public int Id { get; set; }
+
+        public int? ProjectId { get; set; }
+        public DateTime DueDate { get; set; }
 
         public override string ToString()
         {
