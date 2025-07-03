@@ -7,14 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+
 namespace Asana.Maui.ViewModels
 {
-    public class ToDoDetailViewModel
+    public class ToDoDetailViewModel : INotifyPropertyChanged
     {
         public ToDoDetailViewModel() {
-            Model = new ToDo();
+            //Model = new ToDo();
+            Model = new ToDo { DueDate = DateTime.Today };
 
             DeleteCommand = new Command(DoDelete);
+
+            Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
+            SelectedProject = Projects.FirstOrDefault(p => p.Id == Model.ProjectId);
         }
 
         public ToDoDetailViewModel(int id)
@@ -22,12 +29,19 @@ namespace Asana.Maui.ViewModels
             Model = ToDoServiceProxy.Current.GetById(id) ?? new ToDo();
 
             DeleteCommand = new Command(DoDelete);
+
+            Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
+            SelectedProject = Projects.FirstOrDefault(p => p.Id == Model.ProjectId);
         }
 
         public ToDoDetailViewModel(ToDo? model)
         {
-            Model = model ?? new ToDo();
+            //Model = model ?? new ToDo();
+            Model = model ?? new ToDo { DueDate = DateTime.Today };
             DeleteCommand = new Command(DoDelete);
+
+            Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
+            SelectedProject = Projects.FirstOrDefault(p => p.Id == Model.ProjectId);
         }
 
         public void DoDelete() {
@@ -91,6 +105,31 @@ namespace Asana.Maui.ViewModels
             }
         }
 
+        private Project? _selectedProject;
+        public ObservableCollection<Project> Projects { get; set; }
 
+        public Project? SelectedProject
+        {
+            get => _selectedProject;
+            set
+            {
+                if (_selectedProject != value)
+                {
+                    _selectedProject = value;
+                    if (Model != null)
+                    {
+                        Model.ProjectId = value?.Id;
+                    }
+                    OnPropertyChanged(nameof(SelectedProject));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

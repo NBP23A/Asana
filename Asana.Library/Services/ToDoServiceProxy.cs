@@ -37,8 +37,15 @@ namespace Asana.Library.Services
                 new ToDo{Id = 5, Name = "Task 5", Description = "My Task 5", IsCompleted=true }
             };*/
 
-            var todoData = new WebRequestHandler().Get("/ToDo").Result;
-            ToDos = JsonConvert.DeserializeObject<List<ToDo>>(todoData) ?? new List<ToDo>();
+            //var todoData = new WebRequestHandler().Get("/ToDo").Result;
+            //ToDos = JsonConvert.DeserializeObject<List<ToDo>>(todoData) ?? new List<ToDo>();
+
+            _toDoList = new List<ToDo>();
+
+            ToDos = new List<ToDo>
+            {
+                new ToDo{Id = 1, Name = "Sample Task", Description = "Demo item", IsCompleted = false, DueDate = DateTime.Today}
+            };
         }
 
         private static ToDoServiceProxy? instance;
@@ -62,8 +69,14 @@ namespace Asana.Library.Services
                 return toDo;
             }
             var isNewToDo = toDo.Id == 0;
-            var todoData = new WebRequestHandler().Post("/ToDo", toDo).Result;
-            var newToDo = JsonConvert.DeserializeObject<ToDo>(todoData);
+            // var newToDo = JsonConvert.DeserializeObject<ToDo>(todoData);
+
+            // Simulating AddOrUpdate locally
+            var newToDo = toDo;
+            if (newToDo.Id == 0)
+            {
+                newToDo.Id = _toDoList.Any() ? _toDoList.Max(t => t.Id) + 1 : 1;
+            }
 
             if (newToDo != null)
             {
@@ -112,9 +125,12 @@ namespace Asana.Library.Services
             {
                 return;
             }
-            var todoData = new WebRequestHandler().Delete($"/ToDo/{id}").Result;
-            var toDoToDelete = JsonConvert.DeserializeObject<ToDo>(todoData);
-            if(toDoToDelete != null)
+            //var todoData = new WebRequestHandler().Delete($"/ToDo/{id}").Result;
+            //var toDoToDelete = JsonConvert.DeserializeObject<ToDo>(todoData);
+
+            var toDoToDelete = _toDoList.FirstOrDefault(t => t.Id == id);
+
+            if (toDoToDelete != null)
             {
                 var localToDo = _toDoList.FirstOrDefault(t => t.Id == toDoToDelete.Id);
                 if(localToDo != null)

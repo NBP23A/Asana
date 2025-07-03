@@ -40,6 +40,29 @@
             <Label Text="Description: " Grid.Column="0"/>
             <Entry Text="{Binding Model.Description}" Grid.Column="1"/>
         </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Label Text="Project:" Grid.Column="0"/>
+            <Picker Grid.Column="1"
+                    ItemsSource="{Binding Projects}" 
+                    ItemDisplayBinding="{Binding Name}" 
+                    SelectedItem="{Binding SelectedProject}" />
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Label Text="Due Date:" Grid.Column="0"/>
+            <DatePicker Grid.Column="1" 
+                        Date="{Binding Model.DueDate}" />
+        </Grid>
+
         <Button Text="Ok" Clicked="OkClicked"/>
         <Button Text="Cancel" Clicked="CancelClicked"/>
     </VerticalStackLayout>
