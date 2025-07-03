@@ -3,33 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Asana.Maui.Views.ProjectsView"
              Title="ProjectsView">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <Grid>
-            <ListView
-                ItemsSource="{Binding Projects}"
-                SelectedItem="{Binding SelectedProject}"
-                >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="10*"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Text="{Binding Model.Id}"/>
-                                <Label FontAttributes="Bold" TextColor="Green" Grid.Column="1" Text="{Binding Model.Name}"/>
 
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
-        <Button Text="Cancel" Clicked="CancelClicked"/>
+    <VerticalStackLayout Padding="20">
+
+        <Label Text="Add New Project:" FontAttributes="Bold" />
+        <Entry Placeholder="Project name" Text="{Binding NewProjectName}" />
+        <Button Text="Add Project" Command="{Binding AddCommand}" />
+
+        <Label Text="Existing Projects:" Margin="0,20,0,5" FontAttributes="Bold" />
+        <ListView
+            ItemsSource="{Binding Projects}"
+            SelectedItem="{Binding SelectedProject}"
+            Margin="0,0,0,10">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="4*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="{Binding Id}" />
+                            <Label Grid.Column="1"
+                                   FontAttributes="Bold"
+                                   TextColor="Green"
+                                   Text="{Binding Name}" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Button Text="Delete Selected Project" Command="{Binding DeleteCommand}" />
+        <Button Text="Cancel" Clicked="CancelClicked" />
     </VerticalStackLayout>
 </ContentPage>
