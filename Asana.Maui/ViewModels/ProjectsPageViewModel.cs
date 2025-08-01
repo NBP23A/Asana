@@ -2,11 +2,8 @@
 using Asana.Library.Services;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Asana.Maui.ViewModels
@@ -17,11 +14,11 @@ namespace Asana.Maui.ViewModels
 
         public ProjectsPageViewModel()
         {
-            Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
-            FilteredProjects = new ObservableCollection<Project>(Projects);
-
+            _projects = ProjectServiceProxy.Current.Projects;
             AddCommand = new Command(DoAdd);
             DeleteCommand = new Command(DoDelete);
+            SortOptions = Enum.GetValues(typeof(ProjectSortOption)).Cast<ProjectSortOption>().ToList();
+            SelectedSortOption = ProjectSortOption.NameAscending;
         }
 
         private string? _newProjectName;
@@ -34,21 +31,6 @@ namespace Asana.Maui.ViewModels
                 {
                     _newProjectName = value;
                     OnPropertyChanged(nameof(NewProjectName));
-                }
-            }
-        }
-
-        private string _searchText = string.Empty;
-        public string SearchText
-        {
-            get => _searchText;
-            set
-            {
-                if (_searchText != value)
-                {
-                    _searchText = value;
-                    OnPropertyChanged(nameof(SearchText));
-                    ApplyFilter();
                 }
             }
         }
@@ -67,31 +49,47 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        private ObservableCollection<Project> _projects = new();
-        public ObservableCollection<Project> Projects
+        private List<Project> _projects = new();
+        public List<Project> Projects
         {
             get => _projects;
             private set
             {
                 _projects = value;
                 OnPropertyChanged(nameof(Projects));
-                ApplyFilter();
             }
         }
 
-        private ObservableCollection<Project> _filteredProjects = new();
-        public ObservableCollection<Project> FilteredProjects
+        private List<Project> _sortedProjects = new();
+        public List<Project> SortedProjects
         {
-            get => _filteredProjects;
+            get => _sortedProjects;
             set
             {
-                _filteredProjects = value;
-                OnPropertyChanged(nameof(FilteredProjects));
+                _sortedProjects = value;
+                OnPropertyChanged(nameof(SortedProjects));
             }
         }
 
         public ICommand AddCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
+
+        public List<ProjectSortOption> SortOptions { get; set; }
+
+        private ProjectSortOption _selectedSortOption;
+        public ProjectSortOption SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set
+            {
+                if (_selectedSortOption != value)
+                {
+                    _selectedSortOption = value;
+                    OnPropertyChanged(nameof(SelectedSortOption));
+                    SortProjects();
+                }
+            }
+        }
 
         private void DoAdd()
         {
@@ -100,8 +98,8 @@ namespace Asana.Maui.ViewModels
                 var newProject = new Project { Name = NewProjectName };
                 ProjectServiceProxy.Current.AddOrUpdateProject(newProject);
                 NewProjectName = string.Empty;
-
-                Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
+                Projects = ProjectServiceProxy.Current.Projects;
+                SortProjects();
             }
         }
 
@@ -110,27 +108,37 @@ namespace Asana.Maui.ViewModels
             if (SelectedProject != null)
             {
                 ProjectServiceProxy.Current.DeleteProject(SelectedProject.Id);
+                Projects = ProjectServiceProxy.Current.Projects;
                 SelectedProject = null;
-
-                Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
+                SortProjects();
             }
         }
 
-        private void ApplyFilter()
+        private void SortProjects()
         {
-            if (Projects == null)
-                return;
-
-            var filtered = Projects
-                .Where(p => string.IsNullOrWhiteSpace(SearchText) || p.Name?.ToLower().Contains(SearchText.ToLower()) == true)
-                .ToList();
-
-            FilteredProjects = new ObservableCollection<Project>(filtered);
+            switch (SelectedSortOption)
+            {
+                case ProjectSortOption.NameAscending:
+                    SortedProjects = Projects.OrderBy(p => p.Name).ToList();
+                    break;
+                case ProjectSortOption.NameDescending:
+                    SortedProjects = Projects.OrderByDescending(p => p.Name).ToList();
+                    break;
+                default:
+                    SortedProjects = Projects;
+                    break;
+            }
         }
 
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    public enum ProjectSortOption
+    {
+        NameAscending,
+        NameDescending
     }
 }

@@ -6,15 +6,16 @@
              NavigatedFrom="ContentPage_NavigatedFrom">
 
     <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
+        <VerticalStackLayout Padding="30,0" Spacing="25">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition Height="10*"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
+
                 <!-- Tool Bar-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
@@ -24,12 +25,19 @@
                     <Label Grid.Column="0" Text="Show Completed Tasks:"/>
                     <CheckBox Margin="5" Grid.Column="1" IsChecked="{Binding IsShowCompleted}"/>
                 </Grid>
+
+                <!-- Search and Sort -->
+                <Grid Grid.Row="1" ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Entry Grid.Column="0" Placeholder="Search todos..." Text="{Binding SearchText}" />
+                    <Picker Grid.Column="1" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortOption}" />
+                </Grid>
+
                 <!-- ToDo List-->
-                <ListView
-                Grid.Row="1"
-                ItemsSource="{Binding ToDos}"
-                SelectedItem="{Binding SelectedToDo}"
-                >
+                <ListView Grid.Row="3" ItemsSource="{Binding ToDos}" SelectedItem="{Binding SelectedToDo}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
@@ -40,7 +48,6 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <CheckBox IsChecked="{Binding Model.IsCompleted}" Grid.Column="0"/>
-
                                     <Grid Grid.Column="1">
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
@@ -49,15 +56,15 @@
                                         <Label TextColor="Red" Grid.Row="0" Text="{Binding Model.Name}"/>
                                         <Label Grid.Row="1" Text="{Binding Model.Description}"/>
                                     </Grid>
-
                                     <Button Grid.Column="2" Text="Delete" Clicked="InLineDeleteClicked" Command="{Binding DeleteCommand}"/>
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+
                 <!-- Button Bar -->
-                <VerticalStackLayout Grid.Row="2">
+                <VerticalStackLayout Grid.Row="4">
                     <Button Text="Add New ToDo" Clicked="AddNewClicked"/>
                     <Button Text="Edit Selected ToDo" Clicked="EditClicked"/>
                     <Button Text="Delete Selected ToDo" Clicked="DeleteClicked"/>
@@ -66,5 +73,4 @@
             </Grid>
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
