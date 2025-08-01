@@ -10,9 +10,15 @@
         <Entry Placeholder="Project name" Text="{Binding NewProjectName}" />
         <Button Text="Add Project" Command="{Binding AddCommand}" />
 
+        <!-- Search Bar -->
+        <Label Text="Search Projects:" Margin="0,20,0,5" FontAttributes="Bold" />
+        <Entry Placeholder="Search..." Text="{Binding SearchText}" />
+
         <Label Text="Existing Projects:" Margin="0,20,0,5" FontAttributes="Bold" />
+
+        <!-- FilteredProjects -->
         <ListView
-            ItemsSource="{Binding Projects}"
+            ItemsSource="{Binding FilteredProjects}"
             SelectedItem="{Binding SelectedProject}"
             Margin="0,0,0,10">
             <ListView.ItemTemplate>
