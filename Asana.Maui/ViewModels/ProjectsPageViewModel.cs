@@ -17,7 +17,9 @@ namespace Asana.Maui.ViewModels
 
         public ProjectsPageViewModel()
         {
-            Projects = ProjectServiceProxy.Current.Projects;
+            Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
+            FilteredProjects = new ObservableCollection<Project>(Projects);
+
             AddCommand = new Command(DoAdd);
             DeleteCommand = new Command(DoDelete);
         }
@@ -36,6 +38,21 @@ namespace Asana.Maui.ViewModels
             }
         }
 
+        private string _searchText = string.Empty;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged(nameof(SearchText));
+                    ApplyFilter();
+                }
+            }
+        }
+
         private Project? _selectedProject;
         public Project? SelectedProject
         {
@@ -50,14 +67,26 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        private List<Project> _projects = new();
-        public List<Project> Projects
+        private ObservableCollection<Project> _projects = new();
+        public ObservableCollection<Project> Projects
         {
             get => _projects;
             private set
             {
                 _projects = value;
                 OnPropertyChanged(nameof(Projects));
+                ApplyFilter();
+            }
+        }
+
+        private ObservableCollection<Project> _filteredProjects = new();
+        public ObservableCollection<Project> FilteredProjects
+        {
+            get => _filteredProjects;
+            set
+            {
+                _filteredProjects = value;
+                OnPropertyChanged(nameof(FilteredProjects));
             }
         }
 
@@ -71,7 +100,8 @@ namespace Asana.Maui.ViewModels
                 var newProject = new Project { Name = NewProjectName };
                 ProjectServiceProxy.Current.AddOrUpdateProject(newProject);
                 NewProjectName = string.Empty;
-                Projects = ProjectServiceProxy.Current.Projects;
+
+                Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
             }
         }
 
@@ -80,9 +110,22 @@ namespace Asana.Maui.ViewModels
             if (SelectedProject != null)
             {
                 ProjectServiceProxy.Current.DeleteProject(SelectedProject.Id);
-                Projects = ProjectServiceProxy.Current.Projects;
                 SelectedProject = null;
+
+                Projects = new ObservableCollection<Project>(ProjectServiceProxy.Current.Projects);
             }
+        }
+
+        private void ApplyFilter()
+        {
+            if (Projects == null)
+                return;
+
+            var filtered = Projects
+                .Where(p => string.IsNullOrWhiteSpace(SearchText) || p.Name?.ToLower().Contains(SearchText.ToLower()) == true)
+                .ToList();
+
+            FilteredProjects = new ObservableCollection<Project>(filtered);
         }
 
         private void OnPropertyChanged(string propertyName)
