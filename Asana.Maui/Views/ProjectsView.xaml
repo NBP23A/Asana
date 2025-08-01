@@ -10,15 +10,14 @@
         <Entry Placeholder="Project name" Text="{Binding NewProjectName}" />
         <Button Text="Add Project" Command="{Binding AddCommand}" />
 
-        <!-- Search Bar -->
-        <Label Text="Search Projects:" Margin="0,20,0,5" FontAttributes="Bold" />
-        <Entry Placeholder="Search..." Text="{Binding SearchText}" />
+        <Label Text="Sort Projects:" Margin="0,20,0,5" FontAttributes="Bold" />
+        <Picker ItemsSource="{Binding SortOptions}" 
+                SelectedItem="{Binding SelectedSortOption}"
+                Title="Select sort order" />
 
         <Label Text="Existing Projects:" Margin="0,20,0,5" FontAttributes="Bold" />
-
-        <!-- FilteredProjects -->
         <ListView
-            ItemsSource="{Binding FilteredProjects}"
+            ItemsSource="{Binding SortedProjects}"
             SelectedItem="{Binding SelectedProject}"
             Margin="0,0,0,10">
             <ListView.ItemTemplate>
