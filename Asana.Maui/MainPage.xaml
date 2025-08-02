@@ -16,7 +16,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <!-- Tool Bar-->
+                <!-- Tool Bar -->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -36,7 +36,17 @@
                     <Picker Grid.Column="1" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortOption}" />
                 </Grid>
 
-                <!-- ToDo List-->
+                <!-- Import/Export Buttons -->
+                <Grid Grid.Row="2" ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Text="Import" Clicked="OnImportClicked"/>
+                    <Button Grid.Column="1" Text="Export" Clicked="OnExportClicked"/>
+                </Grid>
+
+                <!-- ToDo List -->
                 <ListView Grid.Row="3" ItemsSource="{Binding ToDos}" SelectedItem="{Binding SelectedToDo}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -56,7 +66,7 @@
                                         <Label TextColor="Red" Grid.Row="0" Text="{Binding Model.Name}"/>
                                         <Label Grid.Row="1" Text="{Binding Model.Description}"/>
                                     </Grid>
-                                    <Button Grid.Column="2" Text="Delete" Clicked="InLineDeleteClicked" Command="{Binding DeleteCommand}"/>
+                                    <Button Grid.Column="2" Text="Delete" Clicked="InLineDeleteClicked"/>
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

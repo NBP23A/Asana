@@ -118,5 +118,12 @@ namespace Asana.Maui.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public void DeleteToDoById(int id)
+        {
+            ToDoServiceProxy.Current.DeleteToDo(id);
+            NotifyPropertyChanged(nameof(ToDos));
+        }
+
     }
 }

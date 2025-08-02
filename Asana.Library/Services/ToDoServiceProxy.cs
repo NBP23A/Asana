@@ -141,5 +141,16 @@ namespace Asana.Library.Services
 
         }
 
+        public Task<List<ToDo>> GetAllToDosAsync()
+        {
+            return Task.FromResult(ToDos);
+        }
+
+        public Task SaveToDoAsync(ToDo todo)
+        {
+            AddOrUpdate(todo);
+            return Task.CompletedTask;
+        }
+
     }
 }
