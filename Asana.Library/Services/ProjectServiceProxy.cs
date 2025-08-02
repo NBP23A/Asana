@@ -28,7 +28,7 @@ namespace Asana.Library.Services
 
         public List<Project> Projects
         {
-            get { return _projects.ToList(); } // returns a copy like ToDo
+            get { return _projects.ToList(); }
             private set { _projects = value; }
         }
 
@@ -69,5 +69,16 @@ namespace Asana.Library.Services
                 _projects.Remove(project);
             }
         }
+        public Task<List<Project>> GetAllProjectsAsync()
+        {
+            return Task.FromResult(Projects);
+        }
+
+        public Task SaveProjectAsync(Project project)
+        {
+            AddOrUpdateProject(project);
+            return Task.CompletedTask;
+        }
+
     }
 }
